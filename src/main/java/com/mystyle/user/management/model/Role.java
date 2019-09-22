@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.mystyle.user.mangement.model;
+package com.mystyle.user.management.model;
 
 /**
  * @author chandan

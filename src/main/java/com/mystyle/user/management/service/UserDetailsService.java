@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.mystyle.user.mangement.service;
+package com.mystyle.user.management.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -1,10 +1,8 @@
-package com.mystyle.user.mangement.service;
+package com.mystyle.user.management.service;
 
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-
-import com.mystyle.user.mangement.model.User;
+import com.mystyle.user.management.model.User;
 
 /**
  * 

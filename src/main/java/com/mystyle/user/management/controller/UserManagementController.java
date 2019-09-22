@@ -1,5 +1,5 @@
 
-package com.mystyle.user.mangement.controller;
+package com.mystyle.user.management.controller;
 
 import java.security.Principal;
 import java.util.List;
@@ -13,11 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mystyle.user.mangement.model.Role;
-import com.mystyle.user.mangement.model.User;
-import com.mystyle.user.mangement.service.UserService;
+import com.mystyle.user.management.model.Role;
+import com.mystyle.user.management.model.User;
+import com.mystyle.user.management.service.UserService;
 
 /**
  * @author chandan
@@ -25,38 +26,39 @@ import com.mystyle.user.mangement.service.UserService;
  */
 
 @RestController
+@RequestMapping("/service")
 public class UserManagementController {
 
-	   @Autowired
-	    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-	    @Autowired
-	    private DiscoveryClient discoveryClient;
+	@Autowired
+	private DiscoveryClient discoveryClient;
 
-	    @Autowired
-	    private Environment env;
+	@Autowired
+	private Environment env;
 
-	    @Value("${spring.application.name}")
-	    private String serviceId;
+	@Value("${spring.application.name}")
+	private String serviceId;
 
-	    @GetMapping("/service/port")
-	    public String getPort(){
-	        return "Service port number : " + env.getProperty("local.server.port");
-	    }
+	@GetMapping("/port")
+	public String getPort() {
+		return "Service port number : " + env.getProperty("local.server.port");
+	}
 
-	    @GetMapping("/service/instances")
-	    public ResponseEntity<?> getInstances(){
-	        return new ResponseEntity<>(discoveryClient.getInstances(serviceId), HttpStatus.OK);
-	    }
+	@GetMapping("/instances")
+	public ResponseEntity<?> getInstances() {
+		return new ResponseEntity<>(discoveryClient.getInstances(serviceId), HttpStatus.OK);
+	}
 
-	    @GetMapping("/service/services")
-	    public ResponseEntity<?> getServices(){
-	        return new ResponseEntity<>(discoveryClient.getServices(), HttpStatus.OK);
-	    }
-	    
-	    
-	@PostMapping("/service/registration")
+	@GetMapping("/services")
+	public ResponseEntity<?> getServices() {
+		return new ResponseEntity<>(discoveryClient.getServices(), HttpStatus.OK);
+	}
+
+	@PostMapping("/registration")
 	public ResponseEntity<?> saveUser(@RequestBody User user) {
+		System.out.println("inside registration.........");
 		if (userService.findByUsername(user.getUsername()) != null) {
 			// Status code:409
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -68,26 +70,27 @@ public class UserManagementController {
 		return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
 	}
 
-	@GetMapping("/service/login")
+	@GetMapping("/login")
 	public ResponseEntity<?> getUser(Principal principal) {
+		  System.out.println("inside login .........");
 		// Principal principal=request.getUserPrincipal();
-
 		if (principal == null || principal.getName() == null) {
 			// this means; logout will be successful login?logout
+		   System.out.println("logout");
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		// username=principal.getName()
+		System.out.println("username"+principal.getName());
 		return ResponseEntity.ok(userService.findByUsername(principal.getName()));
 
 	}
 
-	@PostMapping("/service/user/names")
-	public ResponseEntity<?> getNamesOfUsers(@RequestBody List<Long> idList) {
-		return ResponseEntity.ok(userService.findUsers(idList));
+	  @PostMapping("/names")
+	    public ResponseEntity<?> getNamesOfUsers(@RequestBody List<Long> idList){
+	        return ResponseEntity.ok(userService.findUsers(idList));
+	    }
 
-	}
-
-	@GetMapping("/service/test")
+	@GetMapping("/test")
 	public ResponseEntity<?> test() {
 		return ResponseEntity.ok("userservice api working fine!!!");
 

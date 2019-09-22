@@ -1,4 +1,4 @@
-package com.mystyle.user.mangement.repository;
+package com.mystyle.user.management.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.mystyle.user.mangement.model.User;
+import com.mystyle.user.management.model.User;
 /**
  * 
  * @author chandan

@@ -17,55 +17,46 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-/**
- * @author chandan
- *
- */
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
-	
-	@Autowired
-	private UserDetailsService userDetailsService;
-	
-	
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
-	@Override
-	protected void configure (HttpSecurity http) throws Exception {
-		
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        //Cross origin resource sharing
+        http.cors().and()
+                //starts authorizing configurations.
+                .authorizeRequests()
+                //ignoring the guest's urls...
+                .antMatchers("/resources/**", "/error", "/service/**").permitAll()
+                //authenticate all remaining URLs.
+                .anyRequest().fullyAuthenticated()
+                .and()
+                .logout().permitAll()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/service/logout", "POST"))
+                //login form
+                .and()
+                .formLogin().loginPage("/service/login").and()
+                //enable basic header authentication.
+                .httpBasic().and()
+                //cross-side request forgery.
+                .csrf().disable();
+    }
 
-			// Cross origin resource sharing
-			http.cors().and()//HttpSecurity
-			//starts authorizing configurations
-				.authorizeRequests() //Expressionintercepturlregistry
-				.antMatchers("/resources/**","/error","/service/**").permitAll()
-				//authenticate all remaning URLS
-			    .anyRequest().fullyAuthenticated()
-			    .and()//HttpSecurity
-			    .logout().permitAll()
-			    .logoutRequestMatcher(new AntPathRequestMatcher("/service/logout","POST"))
-			    //login form
-			    .and()//HttpSecurity
-			    .formLogin().loginPage("/service/login").and()
-			    //enable basic header authentication
-			    .httpBasic().and()
-			    .csrf().disable();
-			
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
 
-	
-	}
-
-	 @Override
-	    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-	        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-	    }
-	
-	
-	@Bean
+    @Bean
     public WebMvcConfigurer corsConfigurer(){
         return new WebMvcConfigurer() {
             @Override
@@ -74,5 +65,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
             }
         };
     }
-
 }
